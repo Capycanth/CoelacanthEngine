@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "2GQtZ5NAuRnqvzs5NC7/SNruxv5SwYZJ2PaiMtJolMxg4A5YfGJXfmFCFL19q0Atq7JwVy46Dvb6T+a73eILgA==",
+  "success": true,
+  "projectFilePath": "C:\\OiCornwall\\GameDev\\CoelacanthEngine\\CoelacanthEngine.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\dillo\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512"
+  ],
+  "logs": []
+}
