@@ -1,146 +1,143 @@
-﻿namespace CoelacanthEngine.input
-{
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Input;
-    using System;
-    using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
-    public class InputManager
+namespace CoelacanthEngine.input
+{
+
+    public sealed class InputManager
     {
         public Point MousePoint { get; private set; }
-        private Dictionary<Keys, float> _keyPressDurations;
-        private Dictionary<MouseButton, float> _mouseButtonDurations;
-        
+        public int ScrollWheelValue { get; private set; }
 
-        public InputManager()
+        private Dictionary<Keys, float> _keyPressDurations;
+        private Dictionary<Keys, ClickState> _keyClickStates;
+        private Dictionary<MouseButton, float> _mousePressDurations;
+        private Dictionary<MouseButton, ClickState> _mouseClickStates;
+
+        private const float LONG_PRESS_DURATION = 350f;
+
+        public InputManager(int keyInputs)
         {
-            _keyPressDurations = new Dictionary<Keys, float>();
-            _mouseButtonDurations = new Dictionary<MouseButton, float>();
+            _keyPressDurations = new Dictionary<Keys, float>(keyInputs);
+            _keyClickStates = new Dictionary<Keys, ClickState>(keyInputs);
+            _mousePressDurations = new Dictionary<MouseButton, float>(5);
+            _mouseClickStates = new Dictionary<MouseButton, ClickState>(5);
+        }
+
+        public ClickState GetClickState(Keys key)
+        {
+            return _keyClickStates.TryGetValue(key, out ClickState state) ? state : ClickState.None;
+        }
+
+        public ClickState GetClickState(MouseButton mouseButton)
+        {
+            return _mouseClickStates.TryGetValue(mouseButton, out ClickState state) ? state : ClickState.None;
+        }
+
+        public bool IsSingleClick(Keys key)
+        {
+            return _keyClickStates.TryGetValue(key, out ClickState state) && state == ClickState.Single;
+        }
+
+        public bool IsSingleClick(MouseButton mouseButton)
+        {
+            return _mouseClickStates.TryGetValue(mouseButton, out ClickState state) && state == ClickState.Single;
+        }
+
+        public bool IsLongClick(Keys key)
+        {
+            return _keyClickStates.TryGetValue(key, out ClickState state) && state == ClickState.Long;
+        }
+
+        public bool IsLongClick(MouseButton mouseButton)
+        {
+            return _mouseClickStates.TryGetValue(mouseButton, out ClickState state) && state == ClickState.Long;
+        }
+
+        public float GetPressDuration(Keys key)
+        {
+            return _keyPressDurations.TryGetValue(key, out float duration) ? duration : 0f;
+        }
+
+        public float GetPressDuration(MouseButton mouseButton)
+        {
+            return _mousePressDurations.TryGetValue(mouseButton, out float duration) ? duration : 0f;
         }
 
         public void Update(float deltaMs)
         {
-            // Update keyboard states
-            KeyboardState keyboardState = Keyboard.GetState();
-            UpdateKeyDurations(keyboardState, deltaMs);
+            FlushClickStates();
 
-            // Update mouse button states
-            MouseState mouseState = Mouse.GetState();
-            UpdateMouseButtonDurations(mouseState, deltaMs);
-            MousePoint = mouseState.Position;
-        }
+            MouseState currMouseState = Mouse.GetState();
+            KeyboardState currKeyboardState = Keyboard.GetState();
 
-        private void UpdateKeyDurations(KeyboardState keyboardState, float deltaTime)
-        {
-            foreach (Keys key in new List<Keys>(_keyPressDurations.Keys))
-            {
-                if (keyboardState.IsKeyUp(key))
-                {
-                    _keyPressDurations.Remove(key);
-                }
-            }
+            //region Mouse Update
+            MousePoint = currMouseState.Position;
+            ScrollWheelValue = currMouseState.ScrollWheelValue;
 
-            foreach (Keys key in keyboardState.GetPressedKeys())
+            UpdateMouseButtonInfo(MouseButton.LeftButton, currMouseState.LeftButton, deltaMs);
+            UpdateMouseButtonInfo(MouseButton.RightButton, currMouseState.RightButton, deltaMs);
+            UpdateMouseButtonInfo(MouseButton.MiddleButton, currMouseState.MiddleButton, deltaMs);
+            UpdateMouseButtonInfo(MouseButton.XButton1, currMouseState.XButton1, deltaMs);
+            UpdateMouseButtonInfo(MouseButton.XButton2, currMouseState.XButton2, deltaMs);
+            //endregion
+
+            //region Keyboard Update
+            Keys[] pressedKeys = currKeyboardState.GetPressedKeys();
+            foreach(Keys key in pressedKeys)
             {
                 if (_keyPressDurations.ContainsKey(key))
                 {
-                    _keyPressDurations[key] += deltaTime;
+                    _keyPressDurations[key] += deltaMs; // FIX ME: Main processing loop for Keys and Mouse Buttons
                 }
                 else
                 {
-                    _keyPressDurations[key] = deltaTime;
+                    _keyClickStates[key] = _keyPressDurations[key] > LONG_PRESS_DURATION ? ClickState.Long : ClickState.Single;
+                    _keyPressDurations[key] = 0f;
                 }
             }
+            //endregion
         }
 
-        private void UpdateMouseButtonDurations(MouseState mouseState, float deltaTime)
+        private void UpdateMouseButtonInfo(MouseButton mouseButton, ButtonState state, float deltaMs)
         {
-            foreach (MouseButton button in new List<MouseButton>(_mouseButtonDurations.Keys))
+            if (state == ButtonState.Pressed)
             {
-                if (IsMouseButtonUp(mouseState, button))
-                {
-                    _mouseButtonDurations.Remove(button);
-                }
-            }
-
-            foreach (MouseButton button in Enum.GetValues(typeof(MouseButton)))
-            {
-                if (IsMouseButtonDown(mouseState, button))
-                {
-                    if (_mouseButtonDurations.ContainsKey(button))
-                    {
-                        _mouseButtonDurations[button] += deltaTime;
-                    }
-                    else
-                    {
-                        _mouseButtonDurations[button] = deltaTime;
-                    }
-                }
-            }
-        }
-
-        private bool IsMouseButtonDown(MouseState mouseState, MouseButton button)
-        {
-            return button switch
-            {
-                MouseButton.LeftButton => mouseState.LeftButton == ButtonState.Pressed,
-                MouseButton.RightButton => mouseState.RightButton == ButtonState.Pressed,
-                MouseButton.MiddleButton => mouseState.MiddleButton == ButtonState.Pressed,
-                MouseButton.XButton1 => mouseState.XButton1 == ButtonState.Pressed,
-                MouseButton.XButton2 => mouseState.XButton2 == ButtonState.Pressed,
-                _ => false,
-            };
-        }
-
-        private bool IsMouseButtonUp(MouseState mouseState, MouseButton button)
-        {
-            return button switch
-            {
-                MouseButton.LeftButton => mouseState.LeftButton == ButtonState.Released,
-                MouseButton.RightButton => mouseState.RightButton == ButtonState.Released,
-                MouseButton.MiddleButton => mouseState.MiddleButton == ButtonState.Released,
-                MouseButton.XButton1 => mouseState.XButton1 == ButtonState.Released,
-                MouseButton.XButton2 => mouseState.XButton2 == ButtonState.Released,
-                _ => true,
-            };
-        }
-
-        public ClickType GetKeyButtonClickType(Keys key)
-        {
-            return _keyPressDurations.TryGetValue(key, out float duration) ? DetermineClickType(duration) : ClickType.None;
-        }
-
-        public ClickType GetMouseButtonClickType(MouseButton button)
-        {
-            return _mouseButtonDurations.TryGetValue(button, out float duration) ? DetermineClickType(duration) : ClickType.None;
-        }
-
-        private ClickType DetermineClickType(float duration)
-        {
-            if (duration < 200)
-            {
-                return ClickType.SingleClick;
+                if (_mousePressDurations.ContainsKey(mouseButton))
+                    _mousePressDurations[mouseButton] += deltaMs;
+                else
+                    _mousePressDurations.Add(mouseButton, deltaMs);
             }
             else
             {
-                return ClickType.LongClick;
+                if (_mousePressDurations.ContainsKey(mouseButton))
+                {
+                    _mouseClickStates[mouseButton] = _mousePressDurations[mouseButton] > LONG_PRESS_DURATION ? ClickState.Long : ClickState.Single;
+                    _mousePressDurations[mouseButton] = 0f;
+                }
             }
         }
 
-        public enum MouseButton
+        private void FlushClickStates()
         {
-            LeftButton,
-            RightButton,
-            MiddleButton,
-            XButton1,
-            XButton2
+            _keyClickStates.Clear();
+            _mouseClickStates.Clear();
         }
+    }
 
-        public enum ClickType
-        {
-            None,
-            SingleClick,
-            LongClick
-        }
+    public enum MouseButton
+    {
+        LeftButton,
+        RightButton,
+        MiddleButton,
+        XButton1,
+        XButton2,
+    }
+
+    public enum ClickState
+    {
+        None,
+        Single,
+        Long,
     }
 }
