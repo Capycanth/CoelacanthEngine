@@ -8,13 +8,11 @@
 
   <ItemGroup>
     <Folder Include="dexvision\complex\" />
-    <Folder Include="dexvision\primitive\" />
     <Folder Include="loader\" />
     <Folder Include="audio\" />
     <Folder Include="config\" />
     <Folder Include="util\" />
     <Folder Include="state\" />
-    <Folder Include="serialization\" />
   </ItemGroup>
 
   <ItemGroup>
