@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace CoelacanthEngine.input
 {
@@ -84,18 +85,21 @@ namespace CoelacanthEngine.input
 
             //region Keyboard Update
             Keys[] pressedKeys = currKeyboardState.GetPressedKeys();
-            foreach(Keys key in pressedKeys)
+            foreach(Keys key in _keyPressDurations.Keys.ToList())
             {
-                if (_keyPressDurations.ContainsKey(key))
-                {
-                    _keyPressDurations[key] += deltaMs; // FIX ME: Main processing loop for Keys and Mouse Buttons
-                }
+                if(pressedKeys.Contains(key))
+                    // Was pressed before and is pressed now
+                    _keyPressDurations[key] += deltaMs;     
                 else
                 {
-                    _keyClickStates[key] = _keyPressDurations[key] > LONG_PRESS_DURATION ? ClickState.Long : ClickState.Single;
-                    _keyPressDurations[key] = 0f;
+                    // Was pressed before and is not pressed now
+                    _keyClickStates.Add(key, _keyPressDurations[key] > LONG_PRESS_DURATION ? ClickState.Long : ClickState.Single);
+                    _keyPressDurations.Remove(key);
                 }
             }
+            foreach(Keys key in pressedKeys.Except(_keyPressDurations.Keys).ToList())
+                // Was not pressed before and is pressed now
+                _keyPressDurations.Add(key, deltaMs);
             //endregion
         }
 
@@ -104,17 +108,19 @@ namespace CoelacanthEngine.input
             if (state == ButtonState.Pressed)
             {
                 if (_mousePressDurations.ContainsKey(mouseButton))
-                    _mousePressDurations[mouseButton] += deltaMs;
+                    _mousePressDurations[mouseButton] += deltaMs;   // Is pressed now and was pressed before
                 else
-                    _mousePressDurations.Add(mouseButton, deltaMs);
+                    _mousePressDurations.Add(mouseButton, deltaMs); // Is pressed now and was not pressed before
             }
             else
             {
                 if (_mousePressDurations.ContainsKey(mouseButton))
                 {
-                    _mouseClickStates[mouseButton] = _mousePressDurations[mouseButton] > LONG_PRESS_DURATION ? ClickState.Long : ClickState.Single;
-                    _mousePressDurations[mouseButton] = 0f;
+                    // Is not pressed now but was pressed before
+                    _mouseClickStates.Add(mouseButton, _mousePressDurations[mouseButton] > LONG_PRESS_DURATION ? ClickState.Long : ClickState.Single);
+                    _mousePressDurations.Remove(mouseButton);
                 }
+                // Is not pressed now and was not pressed before: Do Nothing
             }
         }
 
