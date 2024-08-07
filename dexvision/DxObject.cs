@@ -2,7 +2,6 @@
 using CoelacanthEngine.input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Runtime.Serialization;
 
 namespace CoelacanthEngine.dexvision
 {
