@@ -1,10 +1,11 @@
-﻿using CoelacanthEngine.log;
+﻿using CoelacanthEngine.config;
+using CoelacanthEngine.log;
 
 namespace CoelacanthEngine.serialization
 {
     public static class BinarySerializer
     {
-        //private static readonly string SaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ChekhovSettings.Settings.GameName, "Data");
+        private static readonly string SaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), CoelacanthSettings.Instance.GameName, "Data");
         private static readonly Logger _logger = new Logger(typeof(BinarySerializer));
 
         public static void Save<T>(T obj, string fileName) where T : IBinary

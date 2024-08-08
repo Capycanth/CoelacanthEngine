@@ -1,4 +1,5 @@
-﻿using CoelacanthEngine.log;
+﻿using CoelacanthEngine.config;
+using CoelacanthEngine.log;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace CoelacanthEngine.serialization
 {
     public static class JSONSerializer
     {
-        //private static readonly string SaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ChekhovSettings.Settings.GameName, "Data");
+        private static readonly string SaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), CoelacanthSettings.Instance.GameName, "Data");
         private static readonly Logger _logger = new Logger(typeof(JSONSerializer));
 
         public static void Save<T>(T obj, string fileName)

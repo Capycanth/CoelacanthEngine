@@ -1,4 +1,6 @@
-﻿namespace CoelacanthEngine.log
+﻿using CoelacanthEngine.config;
+
+namespace CoelacanthEngine.log
 {
     public sealed class Logger
     {
@@ -6,7 +8,7 @@
 
         public Logger(Type clazz)
         {
-            //this.SaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ChekhovSettings.Settings.GameName, "Log", $"{NullSafeClassName(clazz)}.txt");
+            this.SaveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), CoelacanthSettings.Instance.GameName, "Log", $"{NullSafeClassName(clazz)}.txt");
         }
 
         private void Log(string message)
