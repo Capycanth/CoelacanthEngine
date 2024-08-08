@@ -57,10 +57,7 @@ namespace CoelacanthEngine.state
         {
             if (_isLoading)
             {
-                _graphicsDevice.Clear(Color.Black);
-                _spriteBatch.Begin();
                 _spriteBatch.DrawString(_loadingFont, _loadingMessage, new Vector2(100, 100), Color.White);
-                _spriteBatch.End();
             }
             else
             {
