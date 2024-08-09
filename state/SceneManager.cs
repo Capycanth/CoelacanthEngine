@@ -1,30 +1,29 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace CoelacanthEngine.state
 {
     public class SceneManager
     {
         private Dictionary<int, BaseScene> _scenes;
+        private Dictionary<int, BasePermScene> _permScenes;
         private BaseScene _currentScene;
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
-        private SpriteFont _loadingFont;
         private bool _isLoading;
-        private string _loadingMessage;
 
-        public SceneManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, SpriteFont loadingFont)
+        public SceneManager()
         {
             _scenes = new Dictionary<int, BaseScene>();
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = spriteBatch;
-            _loadingFont = loadingFont;
-            _loadingMessage = "Loading...";
+            _permScenes = new Dictionary<int, BasePermScene>();  
         }
 
         public void AddScene(int sceneId, BaseScene scene)
         {
             _scenes[sceneId] = scene;
+        }
+
+        public void LoadPermScene(int sceneId, BasePermScene scene)
+        {
+            _permScenes[sceneId] = scene;
+            _permScenes[sceneId].LoadContent();
         }
 
         public async Task LoadSceneAsync(int sceneId)
@@ -45,7 +44,7 @@ namespace CoelacanthEngine.state
         {
             if (_isLoading)
             {
-                // Display loading screen or perform loading screen updates
+                _permScenes[0]?.Update(deltaMs);
             }
             else
             {
@@ -57,7 +56,7 @@ namespace CoelacanthEngine.state
         {
             if (_isLoading)
             {
-                _spriteBatch.DrawString(_loadingFont, _loadingMessage, new Vector2(100, 100), Color.White);
+                _permScenes[0]?.Draw(spriteBatch);
             }
             else
             {

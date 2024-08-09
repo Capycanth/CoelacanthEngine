@@ -16,7 +16,7 @@ namespace CoelacanthEngine.state
         public BaseScene()
         {
             Input = new InputManager(64);
-            SetManifest();
+            Manifest = SetManifest();
         }
 
         public abstract void Initialize();

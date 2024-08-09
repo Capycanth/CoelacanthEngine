@@ -1,5 +1,4 @@
-﻿using CoelacanthEngine.log;
-using CoelacanthEngine.state;
+﻿using CoelacanthEngine.state;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +13,11 @@ namespace CoelacanthEngine.cache
 
         // Singleton instance.
         private static ResourceCache _instance;
+
+        private static readonly string TEXTURES = "Textures/";
+        private static readonly string FONTS = "Fonts/";
+        private static readonly string SONGS = "Songs/";
+        private static readonly string SOUNDS = "Sounds/";
 
         // Private constructor to prevent instantiation from outside.
         private ResourceCache(ContentManager contentManager)
@@ -56,22 +60,22 @@ namespace CoelacanthEngine.cache
 
             foreach (var texture in manifest.Textures)
             {
-                tasks.Add(Task.Run(() => GetResource<Texture2D>(texture)));
+                tasks.Add(Task.Run(() => GetResource<Texture2D>(TEXTURES + texture)));
             }
 
             foreach (var font in manifest.Fonts)
             {
-                tasks.Add(Task.Run(() => GetResource<SpriteFont>(font)));
+                tasks.Add(Task.Run(() => GetResource<SpriteFont>(FONTS + font)));
             }
 
             foreach (var sound in manifest.Sounds)
             {
-                tasks.Add(Task.Run(() => GetResource<SoundEffect>(sound)));
+                tasks.Add(Task.Run(() => GetResource<SoundEffect>(SOUNDS + sound)));
             }
 
             foreach (var song in manifest.Songs)
             {
-                tasks.Add(Task.Run(() => GetResource<Song>(song)));
+                tasks.Add(Task.Run(() => GetResource<Song>(SONGS + song)));
             }
 
             await Task.WhenAll(tasks);
