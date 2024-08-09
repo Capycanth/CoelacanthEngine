@@ -8,24 +8,24 @@ namespace CoelacanthEngine.state
 {
     public abstract class BaseScene
     {
-        public List<DxObject> DxObjects { get; private set; }
-        public List<BaseObject> GameObjects { get; private set; }
-        public InputManager Input { get; private set; }
-        public ResourceManifest Manifest { get; private set; }
+        public List<DxObject> DxObjects { get; protected set; }
+        public List<BaseObject> GameObjects { get; protected set; }
+        public InputManager Input { get; protected set; }
+        public ResourceManifest Manifest { get; protected set; }
 
-        public BaseScene(List<DxObject> dxObjects, List<BaseObject> gameObjects)
+        public BaseScene()
         {
-            DxObjects = dxObjects;
-            GameObjects = gameObjects;
             Input = new InputManager(64);
-            Manifest = new ResourceManifest();
+            SetManifest();
         }
 
         public abstract void Initialize();
 
-        public Task LoadContentAsync()
+        public async Task LoadContentAsync()
         {
-            return ResourceCache.Instance.LoadResourcesAsync(Manifest);
+            await ResourceCache.Instance.LoadResourcesAsync(Manifest);
+            SetDxObjects();
+            SetGameObjects();
         }
 
         public virtual void Update(float deltaMs)
@@ -46,5 +46,7 @@ namespace CoelacanthEngine.state
         }
 
         protected abstract ResourceManifest SetManifest();
+        protected abstract List<DxObject> SetDxObjects();
+        protected abstract List<BaseObject> SetGameObjects();
     }
 }
