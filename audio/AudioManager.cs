@@ -31,7 +31,7 @@ namespace CoelacanthEngine.audio
         private void LoadAndPlaySong(int index)
         {
             // Load the song synchronously
-            _currentSong = ResourceCache.Instance.GetResource<Song>(_playlist[index]);
+            _currentSong = ResourceCache.Instance.GetResource<Song>("Songs/" + _playlist[index]);
             MediaPlayer.Play(_currentSong);
 
             // Start loading the next song asynchronously

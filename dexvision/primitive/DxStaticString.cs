@@ -39,19 +39,21 @@ namespace CoelacanthEngine.dexvision.primitive
             _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.Clear(Color.Transparent);
 
+            // Measure the size of the string to center it within the bounds
+            Vector2 textSize = _font.MeasureString(_text);
+
+            // Calculate the position to center the text within the render target
+            Vector2 textPosition = new Vector2(
+                (_renderTarget.Width - textSize.X) / 2,
+                (_renderTarget.Height - textSize.Y) / 2
+            );
+
             // Begin a new SpriteBatch to draw the text
             SpriteBatch spriteBatch = new SpriteBatch(_graphicsDevice);
             spriteBatch.Begin();
 
-            // Measure the size of the string to center it within the bounds
-            Vector2 textSize = _font.MeasureString(_text);
-            Vector2 position = new Vector2(
-                (_bounds.Width - textSize.X) / 2,
-                (_bounds.Height - textSize.Y) / 2
-            );
-
             // Draw the string onto the render target
-            spriteBatch.DrawString(_font, _text, position, Color.White);
+            spriteBatch.DrawString(_font, _text, textPosition, Color.White);
 
             spriteBatch.End();
 

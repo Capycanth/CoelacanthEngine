@@ -1,4 +1,7 @@
-﻿alpha/1.1.1 (08/10/24)
+﻿alpha/1.1.2 (08/10/24)
+	- Fixed AudioManager issue with loading songs
+
+alpha/1.1.1 (08/10/24)
 	- AudioManager now utilizes ResourceCache
 	- BaseScene now utilizes AudioManager
 	- BaseScene uses Initialize for Input, Audio, and Object creation. Executes at the end of LoadContentAsync
