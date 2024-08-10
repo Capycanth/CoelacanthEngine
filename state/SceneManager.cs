@@ -33,7 +33,6 @@ namespace CoelacanthEngine.state
                 _isLoading = true;
 
                 await scene.LoadContentAsync();
-                scene.Initialize();
 
                 _currentScene = scene;
                 _isLoading = false;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using CoelacanthEngine.cache;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
 
 namespace CoelacanthEngine.audio
@@ -9,11 +10,9 @@ namespace CoelacanthEngine.audio
         private int _currentTrackIndex;
         private Song? _currentSong;
         private bool _isLoadingNextSong;
-        private ContentManager _contentManager;
 
-        public AudioManager(ContentManager contentManager, List<string> playlist)
+        public AudioManager(List<string> playlist)
         {
-            _contentManager = contentManager;
             _playlist = playlist;
             _currentTrackIndex = 0;
             _isLoadingNextSong = false;
@@ -32,7 +31,7 @@ namespace CoelacanthEngine.audio
         private void LoadAndPlaySong(int index)
         {
             // Load the song synchronously
-            _currentSong = _contentManager.Load<Song>(_playlist[index]);
+            _currentSong = ResourceCache.Instance.GetResource<Song>(_playlist[index]);
             MediaPlayer.Play(_currentSong);
 
             // Start loading the next song asynchronously
@@ -47,7 +46,7 @@ namespace CoelacanthEngine.audio
         {
             // Load the next song asynchronously
             string nextSongName = _playlist[index];
-            Song nextSong = _contentManager.Load<Song>(nextSongName);
+            Song nextSong = ResourceCache.Instance.GetResource<Song>(nextSongName);
 
             // Cache the loaded song for when the current song finishes
             if (_currentTrackIndex == index - 1)

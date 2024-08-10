@@ -1,4 +1,5 @@
-﻿using CoelacanthEngine.cache;
+﻿using CoelacanthEngine.audio;
+using CoelacanthEngine.cache;
 using CoelacanthEngine.dexvision;
 using CoelacanthEngine.input;
 using CoelacanthEngine.model;
@@ -11,21 +12,27 @@ namespace CoelacanthEngine.state
         public List<DxObject> DxObjects { get; protected set; }
         public List<BaseObject> GameObjects { get; protected set; }
         public InputManager Input { get; protected set; }
+        public AudioManager Audio { get; protected set; }
         public ResourceManifest Manifest { get; protected set; }
 
         public BaseScene()
         {
-            Input = new InputManager(64);
             Manifest = SetManifest();
         }
 
-        public abstract void Initialize();
+        protected virtual void Initialize()
+        {
+            Input = new InputManager(64);
+            SetDxObjects();
+            SetGameObjects();
+            Audio = new AudioManager(Manifest.Songs);
+            Audio.Play();
+        }
 
         public async Task LoadContentAsync()
         {
             await ResourceCache.Instance.LoadResourcesAsync(Manifest);
-            SetDxObjects();
-            SetGameObjects();
+            Initialize();
         }
 
         public virtual void Update(float deltaMs)

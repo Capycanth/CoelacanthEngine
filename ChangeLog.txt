@@ -1,4 +1,10 @@
-﻿alpha/1.1.0
+﻿alpha/1.1.1 (08/10/24)
+	- AudioManager now utilizes ResourceCache
+	- BaseScene now utilizes AudioManager
+	- BaseScene uses Initialize for Input, Audio, and Object creation. Executes at the end of LoadContentAsync
+	- ResourceCache now ignores Songs when loading from ResourceManifest. This is now handled by AudioManager
+
+alpha/1.1.0 (08/10/24)
 	- Introduced AudioManager
 	- Introduced StaticString
 	- Enhanced DxButton by adding StaticString

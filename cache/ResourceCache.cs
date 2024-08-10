@@ -73,10 +73,11 @@ namespace CoelacanthEngine.cache
                 tasks.Add(Task.Run(() => GetResource<SoundEffect>(SOUNDS + sound)));
             }
 
+            /*  Ignore Songs -> Now handled by AudioManager
             foreach (var song in manifest.Songs)
             {
                 tasks.Add(Task.Run(() => GetResource<Song>(SONGS + song)));
-            }
+            }*/
 
             await Task.WhenAll(tasks);
         }
