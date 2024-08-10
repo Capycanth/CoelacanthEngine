@@ -1,0 +1,5 @@
+﻿alpha/1.1.0
+	- Introduced AudioManager
+	- Introduced StaticString
+	- Enhanced DxButton by adding StaticString
+	- Introduced DxButtonCollection

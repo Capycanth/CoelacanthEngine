@@ -6,7 +6,7 @@ namespace CoelacanthEngine.state
     {
         private Dictionary<int, BaseScene> _scenes;
         private Dictionary<int, BasePermScene> _permScenes;
-        private BaseScene _currentScene;
+        private BaseScene? _currentScene;
         private bool _isLoading;
 
         public SceneManager()
