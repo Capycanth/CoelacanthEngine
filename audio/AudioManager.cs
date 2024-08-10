@@ -46,7 +46,7 @@ namespace CoelacanthEngine.audio
         {
             // Load the next song asynchronously
             string nextSongName = _playlist[index];
-            Song nextSong = ResourceCache.Instance.GetResource<Song>(nextSongName);
+            Song nextSong = ResourceCache.Instance.GetResource<Song>("Songs/" + nextSongName);
 
             // Cache the loaded song for when the current song finishes
             if (_currentTrackIndex == index - 1)
